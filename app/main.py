@@ -79,7 +79,7 @@ class ChatRequest(BaseModel):
 # Health & readiness
 # ─────────────────────────────────────────────────────────────
 @app.get("/health")
-def healthz():
+def health():
     """Liveness probe — process còn sống không?
 
     TODO (CP1 + CP4):

@@ -10,17 +10,17 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo K4-DAY12-...) |
+| Họ và tên | Nguyễn Hải Anh |
+| Mã học viên | 2A202601670 |
+| Repo | https://github.com/haianh06/K4-Day12-2A202601670-NguyenHaiAnh.git |
 
 ## Service
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+| Public URL | https://k4-day12-2a202601670-nguyenhaianh-production.up.railway.app |
+| Platform | Railway |
+| Ngày deploy | 10/08/2026 |
 
 ## Biến Môi Trường Đã Set Trên Cloud
 
@@ -30,7 +30,7 @@ Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 |------|--------|---------|
 | `PORT` | ✅ | platform tự gán |
 | `API_TOKEN` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
+| `REDIS_URL` | ✅ | Redis add-on của Railway |
 | `BUCKET_CAPACITY` | ✅ | 10 |
 | `REFILL_PER_MINUTE` | ✅ | 10 |
 | `DAILY_BUDGET_USD` | ✅ | 1.0 |
@@ -74,7 +74,37 @@ done; echo
 Dán output của các lệnh trên vào đây:
 
 ```
-(điền output)
+# 1. Liveness
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 15
+
+{"status":"ok"}
+
+# 2. Readiness
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 18
+
+{"status":"ready"}
+
+# 3. Không có token
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer
+Content-Type: application/json
+Content-Length: 26
+
+{"detail":"Unauthorized"}
+
+# 4. Có token
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 120
+
+{"text":"Deploy là quá trình đưa ứng dụng lên máy chủ để người dùng sử dụng.","prompt_tokens":15,"completion_tokens":25,"usd_cost":0.00008}
+
+# 5. Rate limit
+200 200 200 200 200 200 200 200 200 200 429 429 429 429 429
 ```
 
 ## Ảnh Chụp Màn Hình
@@ -97,6 +127,4 @@ Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng
    `http://localhost:8000`
 5. Ghi rõ lý do không deploy được vào phần dưới đây:
 
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
+
