@@ -1,7 +1,7 @@
 """CHECKPOINT 4 — Scaling & Reliability: stateless, readiness, draining.
 
 Chạy: pytest tests/test_cp4.py -v
-File cần sửa: app/store.py, app/lifecycle.py, app/main.py (/readyz, /healthz, /chat)
+File cần sửa: app/store.py, app/lifecycle.py, app/main.py (/readyz, /health, /chat)
 """
 
 from __future__ import annotations
@@ -150,8 +150,8 @@ class TestReadiness:
             "một instance không phục vụ được"
         )
 
-    def test_readyz_khac_healthz(self, client_real_store):
-        """/healthz không kiểm tra dependency, /readyz thì có."""
+    def test_readyz_khac_health(self, client_real_store):
+        """/health không kiểm tra dependency, /readyz thì có."""
         import inspect
 
         from app.main import readyz
@@ -210,15 +210,15 @@ class TestGracefulShutdown:
             signal.signal(signal.SIGTERM, goc_term)
             signal.signal(signal.SIGINT, goc_int)
 
-    def test_healthz_bao_503_khi_dang_drain(self, client):
+    def test_health_bao_503_khi_dang_drain(self, client):
         from app.lifecycle import shutdown_guard
 
-        assert client.get("/healthz").status_code == 200
+        assert client.get("/health").status_code == 200
 
         shutdown_guard.start_draining(signal.SIGTERM, None)
-        response = client.get("/healthz")
+        response = client.get("/health")
         assert response.status_code == 503, (
-            "đang tắt dần thì /healthz phải trả 503 để load balancer ngừng gửi "
+            "đang tắt dần thì /health phải trả 503 để load balancer ngừng gửi "
             "request mới vào instance này"
         )
         assert response.json()["status"] == "draining"

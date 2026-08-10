@@ -13,7 +13,7 @@
 #       (Docker cache theo layer: sửa 1 dòng code không phải cài lại thư viện)
 #   [ ] Tạo user thường và chuyển sang bằng lệnh `USER` — container chạy
 #       root nghĩa là ai thoát được khỏi app cũng thành root trên host
-#   [ ] Có `HEALTHCHECK` gọi vào endpoint /healthz
+#   [ ] Có `HEALTHCHECK` gọi vào endpoint /health
 #   [ ] Đọc cổng từ biến môi trường PORT (cloud tự gán cổng, không cố định 8000)
 #
 # Đích cần đạt: image dưới 400MB (bản một stage dưới đây khoảng 1.8GB).
@@ -42,7 +42,7 @@ EXPOSE 8000
 
 # Health check dùng Python (image slim không có curl, đọc PORT động)
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD python -c "import os, urllib.request; port = os.getenv('PORT', '8000'); urllib.request.urlopen(f'http://127.0.0.1:{port}/healthz', timeout=3)"
+  CMD python -c "import os, urllib.request; port = os.getenv('PORT', '8000'); urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=3)"
 
 # Sử dụng shell form để expand biến $PORT khi chạy trên cloud
 CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -1,7 +1,7 @@
 """CHECKPOINT 1 — 12-Factor Config, Health Check & Structured Logging.
 
 Chạy: pytest tests/test_cp1.py -v
-File cần sửa: app/config.py, app/logging_utils.py, app/main.py (/healthz)
+File cần sửa: app/config.py, app/logging_utils.py, app/main.py (/health)
 """
 
 from __future__ import annotations
@@ -122,23 +122,23 @@ class TestStructuredLogging:
 
 
 class TestHealthzEndpoint:
-    def test_healthz_tra_ve_200(self, client):
-        response = client.get("/healthz")
+    def test_health_tra_ve_200(self, client):
+        response = client.get("/health")
         assert response.status_code == 200
         assert response.json()["status"] == "ok"
 
-    def test_healthz_khong_can_token(self, client):
+    def test_health_khong_can_token(self, client):
         """Probe của platform không gửi token — bắt buộc token là tự sát."""
-        assert client.get("/healthz").status_code == 200
+        assert client.get("/health").status_code == 200
 
-    def test_healthz_khong_phu_thuoc_dependency_nao(self):
-        """Redis chết thì /healthz vẫn phải 200, nếu không cả cụm bị restart.
+    def test_health_khong_phu_thuoc_dependency_nao(self):
+        """Redis chết thì /health vẫn phải 200, nếu không cả cụm bị restart.
 
-        Cách kiểm tra: hàm healthz() không được nhận tham số dependency nào.
+        Cách kiểm tra: hàm health() không được nhận tham số dependency nào.
         """
         import inspect
 
-        from app.main import healthz
+        from app.main import health
 
-        params = list(inspect.signature(healthz).parameters)
-        assert not params, f"/healthz không được phụ thuộc dependency: {params}"
+        params = list(inspect.signature(health).parameters)
+        assert not params, f"/health không được phụ thuộc dependency: {params}"

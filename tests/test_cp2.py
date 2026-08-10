@@ -116,13 +116,13 @@ class TestDockerfile:
             "lệnh USER cuối cùng vẫn đang là root"
         )
 
-    def test_co_healthcheck_goi_healthz(self, dockerfile_text):
+    def test_co_healthcheck_goi_health(self, dockerfile_text):
         healthchecks = _instructions(dockerfile_text, "HEALTHCHECK")
         assert healthchecks, (
             "thiếu HEALTHCHECK — Docker không biết container có còn phục vụ được không"
         )
         block = dockerfile_text[dockerfile_text.upper().find("HEALTHCHECK"):]
-        assert "/healthz" in block, "HEALTHCHECK phải gọi vào endpoint /healthz"
+        assert "/health" in block, "HEALTHCHECK phải gọi vào endpoint /health"
 
     def test_khong_hardcode_secret(self, dockerfile_text):
         for bad in ("sk-", "API_TOKEN=", "password"):
