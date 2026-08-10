@@ -4,8 +4,8 @@
 Cloud Run, Datadog...) đọc log bằng máy: một dòng = một JSON object thì mới
 lọc/đếm/cảnh báo được. Đây là khác biệt lớn giữa localhost và production.
 """
-
 from __future__ import annotations
+from asyncio import base_events
 
 import json
 import sys
@@ -35,4 +35,14 @@ def emit(event: str, severity: str = "INFO", **fields) -> str:
         >>> emit("chat_completed", client_id="sv01", usd_cost=0.0001)
         '{"event": "chat_completed", "severity": "INFO", "ts": "...", ...}'
     """
-    raise NotImplementedError("TODO (CP1): cài đặt emit")
+
+    #raise NotImplementedError("TODO (CP1): cài đặt emit")
+    log_entry = {
+        "event": event,
+        "severity": severity.upper(),
+        "ts": utc_now_iso()
+    }
+    log_entry.update(fields)
+    log_line = json.dumps(log_entry, ensure_ascii=False)
+    print(log_line, file=sys.stdout, flush=True)
+    return log_line
