@@ -10,7 +10,6 @@ Chuẩn dùng ở đây là **RFC 6750** — token đi trong header ``Authorizat
 Đây là cách mọi API lớn (GitHub, Stripe, OpenAI) nhận token, nên client viết
 bằng ngôn ngữ nào cũng có sẵn thư viện hiểu nó.
 """
-
 from __future__ import annotations
 
 import secrets
@@ -56,4 +55,30 @@ def verify_bearer_token(
          ``ANONYMOUS_CLIENT``. client_id này là đơn vị để rate limit và tính
          chi phí.
     """
-    raise NotImplementedError("TODO (CP3): cài đặt verify_bearer_token")
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid or missing bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    parts = authorization.split(" ")
+    if len(parts) != 2:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid or missing bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    scheme, token = parts
+    if scheme.lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid or missing bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not secrets.compare_digest(token, get_settings().api_token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid or missing bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return x_client_id or ANONYMOUS_CLIENT

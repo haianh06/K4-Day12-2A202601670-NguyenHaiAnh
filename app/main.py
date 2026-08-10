@@ -160,10 +160,8 @@ def chat(
     ``client_id`` do ``verify_bearer_token`` trả về, nên request không có
     token hợp lệ sẽ dừng ở 401 trước khi chạm vào bất cứ dòng nào ở đây.
     """
-    if not bucket.consume(client_id):
-        return JSONResponse(status_code=429, content={"status": "too many requests"})
-    if not guard.check(client_id):
-        return JSONResponse(status_code=402, content={"status": "out of budget"})
+    bucket.consume(client_id)
+    guard.check(client_id)
     history = store.history(client_id)
     result = generate_reply(payload.message, history)
     store.add_turn(client_id, "user", payload.message)
